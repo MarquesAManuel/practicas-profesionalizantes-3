@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+    <title>Ticket System</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+	<body>
+
+	</body>
+</html>
+
+<script type="text/javascript">
+
+
+    class View {
+        constructor() {
+            this.selectTipe = document.createElement('select');
+            this.selectTipe.innerHTML = 'Tipo';
+
+            this.optionFalla = document.createElement('option');
+            this.optionFalla.value = 'falla';
+            this.optionFalla.innerHTML = 'Falla';
+
+            this.optionNuevoReq = document.createElement('option');
+            this.optionNuevoReq.value = 'nuevoReq';
+            this.optionNuevoReq.innerHTML = 'Nuevo Requerimiento';
+
+            this.selectPriority = document.createElement('select');
+            this.selectPriority.innerHTML = 'Prioridad';
+
+            this.optionUrgente = document.createElement('option');
+            this.optionUrgente.value = 'urgente';
+            this.optionUrgente.innerHTML = 'Urgente';
+
+            this.optionMedia = document.createElement('option');
+            this.optionMedia.value = 'medio';
+            this.optionMedia.innerHTML = 'Medio';
+
+            this.optionBajo = document.createElement('option');
+            this.optionBajo.value = 'bajo';
+            this.optionBajo.innerHTML = 'Bajo';
+
+            this.inputDescripcion = document.createElement('input');
+            this.inputDescripcion.type = 'text';
+
+            this.sendButton = document.createElement('button');
+            this.sendButton.textContent = 'Enviar ticket';
+
+            this.container = document.createElement('div');
+            this.container.classList.add('ticket-container');
+
+            this.container.appendChild(this.createTicketField('Tipo', this.selectTipe));
+            this.container.appendChild(this.createTicketField('Prioridad', this.selectPriority));
+            this.container.appendChild(this.createTicketField('Descripción', this.inputDescripcion));
+            this.container.appendChild(this.sendButton);
+
+            this.ticketDisplay = document.createElement('div');
+            this.ticketDisplay.classList.add('ticket-display');
+
+            this.container.appendChild(this.ticketDisplay);
+
+            this.selectTipe.appendChild(this.optionFalla);
+            this.selectTipe.appendChild(this.optionNuevoReq);
+
+            this.selectPriority.appendChild(this.optionUrgente);
+            this.selectPriority.appendChild(this.optionMedia);
+            this.selectPriority.appendChild(this.optionBajo);
+        }
+
+        createTicketField(labelText, fieldElement) {
+            const fieldContainer = document.createElement('div');
+            fieldContainer.classList.add('ticket-field');
+
+            const label = document.createElement('span');
+            label.classList.add('ticket-label');
+            label.textContent = labelText;
+
+            fieldContainer.appendChild(label);
+            fieldContainer.appendChild(fieldElement);
+
+            return fieldContainer;
+        }
+
+        displayTicket(ticket) {
+            const ticketText = document.createElement('p');
+            ticketText.textContent = `Tipo: ${ticket.tipe}, Prioridad: ${ticket.priority}, Descripción: ${ticket.description}`;
+            
+            if (ticket.priority === 'urgente') {
+              ticketText.style.backgroundColor = 'red';
+            } else if (ticket.priority === 'medio') {
+              ticketText.style.backgroundColor = 'orange';
+            } else if (ticket.priority === 'bajo') {
+              ticketText.style.backgroundColor = 'green';
+            }
+            
+            this.ticketDisplay.appendChild(ticketText);
+          }
+    }
+
+    class Model {
+        constructor() {
+            this.tipe = '';
+            this.priority = '';
+        }
+
+        setTipe(tipe) {
+            this.tipe = tipe;
+            console.log('Ticket type updated:', tipe);
+        }
+
+        setPriority(priority) {
+            this.priority = priority;
+            console.log('Ticket priority updated:', priority);
+        }
+    }
+
+    class Controller {
+        constructor(view, model) {
+            this.view = view;
+            this.model = model;
+
+            this.view.selectTipe.addEventListener('change', this.handleTipeChange.bind(this));
+            this.view.selectPriority.addEventListener('change', this.handlePriorityChange.bind(this));
+            this.view.sendButton.addEventListener('click', this.handleSendTicket.bind(this));
+        }
+
+        handleTipeChange(event) {
+            const selectedTipe = event.target.value;
+            this.model.setTipe(selectedTipe);
+        }
+
+        handlePriorityChange(event) {
+            const selectedPriority = event.target.value;
+            this.model.setPriority(selectedPriority);
+        }
+
+        handleSendTicket() {
+            const ticket = {
+                tipe: this.view.selectTipe.value,
+                priority: this.view.selectPriority.value,
+                description: this.view.inputDescripcion.value
+            };
+
+            this.view.displayTicket(ticket);
+        }
+    }
+
+    class Tickets {
+        constructor() {
+            this.view = new View();
+            this.model = new Model();
+            this.controller = new Controller(this.view, this.model);
+        }
+    }
+
+    function startApp() {
+        let myTickets = new Tickets();
+        document.body.appendChild(myTickets.view.container);
+    }
+
+    window.addEventListener('load', startApp);
+</script> 
